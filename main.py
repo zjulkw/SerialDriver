@@ -1,11 +1,25 @@
 import serial
 import time  # 延时使用
 import binascii
+import serial.tools.list_ports
 
 data1 = '7a7d7e'
 data2 = '7f7c7b'
 
-s = serial.Serial("COM9", 115200)  # 初始化串口
+#查看可用端口并自动建立连接
+#s = serial.Serial("COM9", 115200)  # 初始化串口
+plist = list(serial.tools.list_ports.comports())
+print(plist)
+if len(plist) <= 0:
+    print("没有发现端口!")
+else:
+    plist_0 = list(plist[0])
+    serialName = plist_0[0]
+    serialFd = serial.Serial(serialName, 115200, timeout=6) #波特率设为115200
+    s = serialFd
+    print("可用端口名>>>", serialFd.name)
+
+
 print('进入配置模式')
 print('>>>2a2d2e')
 Hex_str1 = bytes.fromhex('2A 2D 2E')  # 文本转换Hex 进入配置模式
@@ -87,4 +101,4 @@ while True:
     n = s.inWaiting()  # 串口接收
     if n:
         data = str(binascii.b2a_hex(s.read(n)))[2:-1]  # Hex转换成字符串
-        print(data)  # 字符串输出
+        print('<<<'+data)  # 字符串输出
